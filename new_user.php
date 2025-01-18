@@ -35,7 +35,7 @@
 						<div class="form-group">
 							<label for="" class="control-label">User Role</label>
 							<select name="type" id="type" class="custom-select custom-select-sm">
-								<option value="3" <?php echo isset($type) && $type == 3 ? 'selected' : '' ?>>Subscriber</option>
+								<option value="3" <?php echo isset($type) && $type == 3 ? 'selected' : '' ?>>User</option>
 								<option value="2" <?php echo isset($type) && $type == 2 ? 'selected' : '' ?>>Staff</option>
 								<option value="1" <?php echo isset($type) && $type == 1 ? 'selected' : '' ?>>Admin</option>
 							</select>

@@ -21,7 +21,7 @@
             </a>
             
           </li>    
-        <?php if($_SESSION['login_type'] == 1): ?>
+        <?php if($_SESSION['login_type'] == 1 || $_SESSION['login_type'] == 2): ?>
           <li class="nav-item">
             <a href="#" class="nav-link nav-edit_user">
               <i class="nav-icon fas fa-users"></i>
@@ -31,12 +31,13 @@
               </p>
             </a>
             <ul class="nav nav-treeview">
-              <li class="nav-item">
+             <?php if($_SESSION['login_type'] == 1): ?> <li class="nav-item">
                 <a href="./index.php?page=new_user" class="nav-link nav-new_user tree-item">
                   <i class="fas fa-angle-right nav-icon"></i>
                   <p>Add New</p>
                 </a>
               </li>
+              <?php endif; ?>
               <li class="nav-item">
                 <a href="./index.php?page=user_list" class="nav-link nav-user_list tree-item">
                   <i class="fas fa-angle-right nav-icon"></i>

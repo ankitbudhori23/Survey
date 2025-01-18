@@ -19,7 +19,7 @@ while($row=$answers->fetch_assoc()){
 	<div class=" w-100" id='ns' style="display: none"><center><b>No Result.</b></center></div>
 	<div class="row">
 		<?php 
-		$survey = $conn->query("SELECT * FROM survey_set where '".date('Y-m-d')."' between date(start_date) and date(end_date) order by rand() ");
+		$survey = $conn->query("SELECT * FROM survey_set where '".date('Y-m-d')."' between date(start_date) and date(end_date)");
 		while($row=$survey->fetch_assoc()):
 		?>
 		<div class="col-md-3 py-1 px-1 survey-item">

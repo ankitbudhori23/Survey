@@ -15,7 +15,7 @@ $answers = $conn->query("SELECT distinct(survey_id) from answers where user_id =
 	<div class=" w-100" id='ns' style="display: none"><center><b>No Result.</b></center></div>
 	<div class="row">
 		<?php 
-		$survey = $conn->query("SELECT * FROM survey_set order by rand() ");
+		$survey = $conn->query("SELECT * FROM survey_set");
 		while($row=$survey->fetch_assoc()):
 		?>
 		<div class="col-md-3 py-1 px-1 survey-item">

@@ -9,6 +9,8 @@ foreach($qry as $k => $v){
 
 ?>
 <div class="col-lg-12">
+<div style="background-image: url('http://spidcindia.com/assets/image/img_G4.jpeg'); background-size: cover; width: 100%; height: 100%; aspect-ratio: 16 / 9; margin-bottom: 30px">
+</div>
 	<div class="row">
 		<div class="col-md-4">
 			<div class="card card-outline card-primary">
