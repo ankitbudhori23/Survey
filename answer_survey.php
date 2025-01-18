@@ -62,6 +62,10 @@ foreach($qry as $k => $v){
 		                        <label for="option_<?php echo $k ?>"><?php echo $v ?></label>
 		                     </div>
 								<?php endforeach; ?>
+							<?php elseif($row['type'] == 'image'): ?>
+							<div class="">	
+								<input type="file" name="image[<?php echo $row['id'] ?>]" id="image" class="form-control" accept="image/*">
+		                     </div>
 						<?php else: ?>
 							<div class="form-group">
 								<textarea name="answer[<?php echo $row['id'] ?>]" id="" cols="30" rows="4" class="form-control" placeholder="Write Something Here..." ></textarea>
@@ -86,16 +90,22 @@ foreach($qry as $k => $v){
 	$('#manage-survey').submit(function(e){
 		e.preventDefault()
 		start_load()
+
+		// Create a FormData object
+		var formData = new FormData(this);
+
 		$.ajax({
-			url:'ajax.php?action=save_answer',
-			method:'POST',
-			data:$(this).serialize(),
-			success:function(resp){
+			url: 'ajax.php?action=save_answer',
+			method: 'POST',
+			data: formData,
+			processData: false,  // Prevent jQuery from automatically transforming the data into a query string
+			contentType: false,  // Set the content type to false as jQuery will tell the server its a query string request
+			success: function(resp){
 				if(resp == 1){
-					alert_toast("Thank You.",'success')
+					alert_toast("Thank You.", 'success')
 					setTimeout(function(){
 						location.href = 'index.php?page=survey_widget'
-					},2000)
+					}, 2000)
 				}
 			}
 		})

@@ -27,7 +27,7 @@
               <i class="nav-icon fas fa-users"></i>
               <p>
                 Users
-                <i class="right fas fa-angle-left"></i>
+                <i class="right fas fa-angle-right"></i>
               </p>
             </a>
             <ul class="nav nav-treeview">
@@ -50,7 +50,7 @@
               <i class="nav-icon fa fa-poll-h"></i>
               <p>
                 Survey
-                <i class="right fas fa-angle-left"></i>
+                <i class="right fas fa-angle-right"></i>
               </p>
             </a>
             <ul class="nav nav-treeview">

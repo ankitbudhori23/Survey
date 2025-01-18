@@ -22,6 +22,9 @@ while($row=$answers->fetch_assoc()){
 	if($row['type'] == 'textfield_s'){
 		$ans[$row['question_id']][] = $row['answer'];
 	}
+    if($row['type'] == 'image'){
+        $ans[$row['question_id']][] = $row['answer'];
+    }
 }
 ?>
 <style>
@@ -57,9 +60,6 @@ while($row=$answers->fetch_assoc()){
 			<div class="card card-outline card-success">
 				<div class="card-header">
 					<h3 class="card-title"><b>Survey Report</b></h3>
-					<div class="card-tools">
-						<button class="btn btn-flat btn-sm bg-gradient-success" type="button" id="print"><i class="fa fa-print"></i> Print</button>
-					</div>
 				</div>
 				<div class="card-body ui-sortable">
 					<?php 
@@ -72,8 +72,15 @@ while($row=$answers->fetch_assoc()){
 						<input type="hidden" name="qid[<?php echo $row['id'] ?>]" value="<?php echo $row['id'] ?>">	
 						<input type="hidden" name="type[<?php echo $row['id'] ?>]" value="<?php echo $row['type'] ?>">	
 							
-							<?php if($row['type'] != 'textfield_s'):?>
-								<ul>
+						<?php if($row['type'] == 'image'):?>
+							<?php if(isset($ans[$row['id']])): ?>
+								<?php foreach($ans[$row['id']] as $val): ?>
+									<img onclick="showImageModal('<?php echo $val ?>')" src="<?php echo $val ?>" alt="Image Answer" style="width: 80px; height: 80px; cursor: pointer">
+								<?php endforeach; ?>
+							<?php endif; ?>
+
+						<?php elseif($row['type'] != 'textfield_s'):?>
+							<ul>
 							<?php foreach(json_decode($row['frm_option']) as $k => $v): 
 								$prog = $taken > 0 ? ((isset($ans[$row['id']][$k]) ? count($ans[$row['id']][$k]) : 0) / $taken) * 100 : 0;
 								$prog = round($prog,2);
@@ -95,7 +102,7 @@ while($row=$answers->fetch_assoc()){
 									</div>
 								</li>
 								<?php endforeach; ?>
-								</ul>
+							</ul>
 						<?php else: ?>
 							<div class="d-block tfield-area w-100 bg-dark">
 								<?php if(isset($ans[$row['id']])): ?>
@@ -113,7 +120,30 @@ while($row=$answers->fetch_assoc()){
 		</div>
 	</div>
 </div>
+
+<!-- Modal for full screen image -->
+<div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="imageModalLabel">Image View</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <img id="modalImage" src="" alt="Full Screen Image" style="width: 100%; height: auto;">
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
+	function showImageModal(src) {
+		$('#modalImage').attr('src', src);
+		$('#imageModal').modal('show');
+	}
+
 	$('#manage-survey').submit(function(e){
 		e.preventDefault()
 		start_load()

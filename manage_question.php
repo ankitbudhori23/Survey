@@ -24,12 +24,13 @@ foreach($qry as $k => $v){
 								<?php if(isset($id)): ?>
 								<option value="" disabled="" selected="">Please Select here</option>
 								<?php endif; ?>
+								<option value="">Select</option>
 								<option value="radio_opt" <?php echo isset($type) && $type == 'radio_opt' ? 'selected':'' ?>>Single Answer/Radio Button</option>
 								<option value="check_opt" <?php echo isset($type) && $type == 'check_opt' ? 'selected':'' ?>>Multiple Answer/Check Boxes</option>
 								<option value="textfield_s" <?php echo isset($type) && $type == 'textfield_s' ? 'selected':'' ?>>Text Field/ Text Area</option>
+								<option value="image" <?php echo isset($type) && $type == 'image' ? 'selected':'' ?>>Image</option>
 							</select>
 						</div>
-						
 				</div>
 				<div class="col-sm-6">
 					<b>Preview</b>
@@ -38,7 +39,9 @@ foreach($qry as $k => $v){
 						<center><b>Select Question Answer type first.</b></center>
 						<?php else: ?>
 							<div class="callout callout-info">
-							<?php if($type != 'textfield_s'): 
+							<?php if($type == 'image'): ?>
+								<textarea name="frm_opt" id="" cols="30" rows="10" class="form-control" disabled="" placeholder="Image Selector"></textarea>
+							<?php elseif($type != 'textfield_s'): 
 								$opt= $type =='radio_opt' ? 'radio': 'checkbox';
 							?>
 						      <table width="100%" class="table">
@@ -87,7 +90,7 @@ foreach($qry as $k => $v){
 						      </div>
 						      </div>
 						    </div>
-						</div>
+							</div>
 
 						<?php else: ?>
 								<textarea name="frm_opt" id="" cols="30" rows="10" class="form-control" disabled="" placeholder="Write Something here..."></textarea>

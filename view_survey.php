@@ -76,6 +76,10 @@ $answers = $conn->query("SELECT distinct(user_id) from answers where survey_id =
 		                        <label for="option_<?php echo $k ?>"><?php echo $v ?></label>
 		                     </div>
 								<?php endforeach; ?>
+								<?php elseif($row['type'] == 'image'): ?>
+							<div class="icheck-primary">
+		                        <label for="option">Image selector</label>
+		                     </div>
 						<?php else: ?>
 							<div class="form-group">
 								<textarea name="answer[<?php echo $row['id'] ?>]" id="" cols="30" rows="4" class="form-control" placeholder="Write Something Here..."></textarea>

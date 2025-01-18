@@ -157,7 +157,10 @@ Class Action {
 			$data .= ", question='$question' ";
 			$data .= ", type='$type' ";
 			$data .= ", order_by='1' ";
-			if($type != 'textfield_s'){
+			if($type == "image"){
+				$data .= ", frm_option='image' ";
+			}
+			else if($type != 'textfield_s'){
 				$arr = array();
 				foreach ($label as $k => $v) {
 					$i = 0 ;
@@ -200,18 +203,36 @@ Class Action {
 	}
 	function save_answer(){
 		extract($_POST);
-			foreach($qid as $k => $v){
-				$data = " survey_id=$survey_id ";
-				$data .= ", question_id='$qid[$k]' ";
-				$data .= ", user_id='{$_SESSION['login_id']}' ";
-				if($type[$k] == 'check_opt'){
-					$data .= ", answer='[".implode("],[",$answer[$k])."]' ";
-				}else{
-					$data .= ", answer='$answer[$k]' ";
-				}
-				$save[] = $this->db->query("INSERT INTO answers set $data");
+		foreach($qid as $k => $v){
+			$data = " survey_id=$survey_id ";
+			$data .= ", question_id='$qid[$k]' ";
+			$data .= ", user_id='{$_SESSION['login_id']}' ";
+
+			if($type[$k] == 'check_opt'){
+				$data .= ", answer='[".implode("],[",$answer[$k])."]' ";
 			}
-					
+			elseif($type[$k] == 'image'){
+				if(isset($_FILES['image']['tmp_name'][$k]) && $_FILES['image']['tmp_name'][$k] != ''){
+					$uploadDir = 'uploads/';
+					if (!is_dir($uploadDir) || !is_writable($uploadDir)) {
+						// Handle error if directory does not exist or is not writable
+						return 0;
+					}
+					$fname = strtotime(date('y-m-d H:i')).'_'.$_FILES['image']['name'][$k];
+					$move = move_uploaded_file($_FILES['image']['tmp_name'][$k], $uploadDir . $fname);
+					if($move){
+						$data .= ", answer='$uploadDir$fname' ";
+					} else {
+						// Handle error if file upload fails
+						return 0;
+					}
+				}
+			}
+			else{
+				$data .= ", answer='$answer[$k]' ";
+			}
+			$save[] = $this->db->query("INSERT INTO answers set $data");
+		}
 
 		if(isset($save))
 			return 1;
