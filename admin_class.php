@@ -212,19 +212,27 @@ Class Action {
 				$data .= ", answer='[".implode("],[",$answer[$k])."]' ";
 			}
 			elseif($type[$k] == 'image'){
-				if(isset($_FILES['image']['tmp_name'][$k]) && $_FILES['image']['tmp_name'][$k] != ''){
-					$uploadDir = 'uploads/';
-					if (!is_dir($uploadDir) || !is_writable($uploadDir)) {
-						// Handle error if directory does not exist or is not writable
-						return 0;
+				$uploadedFiles = [];
+				if(isset($_FILES['image']['tmp_name'][$k]) && !empty($_FILES['image']['tmp_name'][$k][0])){
+					foreach($_FILES['image']['tmp_name'][$k] as $key => $tmp_name){
+						if($tmp_name != ''){
+							$uploadDir = 'uploads/';
+							if (!is_dir($uploadDir) || !is_writable($uploadDir)) {
+								// Handle error if directory does not exist or is not writable
+								return 0;
+							}
+							$fname = strtotime(date('y-m-d H:i')).'_'.rand(1000,9999).'_'.$_FILES['image']['name'][$k][$key];
+							$move = move_uploaded_file($tmp_name, $uploadDir . $fname);
+							if($move){
+								$uploadedFiles[] = $uploadDir . $fname;
+							} else {
+								// Handle error if file upload fails
+								return 0;
+							}
+						}
 					}
-					$fname = strtotime(date('y-m-d H:i')).'_'.$_FILES['image']['name'][$k];
-					$move = move_uploaded_file($_FILES['image']['tmp_name'][$k], $uploadDir . $fname);
-					if($move){
-						$data .= ", answer='$uploadDir$fname' ";
-					} else {
-						// Handle error if file upload fails
-						return 0;
+					if (!empty($uploadedFiles)) {
+						$data .= ", answer='".json_encode($uploadedFiles)."' ";
 					}
 				}
 			}

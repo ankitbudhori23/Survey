@@ -9,7 +9,7 @@ foreach($qry as $k => $v){
 
 ?>
 <div class="col-lg-12">
-<div style="background-image: url('http://spidcindia.com/assets/image/img_G4.jpeg'); background-size: cover; width: 100%; height: 100%; aspect-ratio: 16 / 9; margin-bottom: 30px">
+	<image src="https://ilcslivelihood.com/images/img123.jpeg" alt="no image" style="background-size: cover; width: 100%; height: 100%; aspect-ratio: 16 / 9; margin-bottom: 30px"/>
 </div>
 	<div class="row">
 		<div class="col-md-4">
@@ -66,7 +66,7 @@ foreach($qry as $k => $v){
 								<?php endforeach; ?>
 							<?php elseif($row['type'] == 'image'): ?>
 							<div class="">	
-								<input type="file" name="image[<?php echo $row['id'] ?>]" id="image" class="form-control" accept="image/*">
+								<input type="file" name="image[<?php echo $row['id'] ?>][]" id="image" class="form-control" accept="image/*" multiple>
 		                     </div>
 						<?php else: ?>
 							<div class="form-group">

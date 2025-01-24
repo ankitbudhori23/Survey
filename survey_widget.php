@@ -38,11 +38,7 @@ while($row=$answers->fetch_assoc()){
                <div class="row">
                	<hr class="border-primary">
                	<div class="d-flex justify-content-center w-100 text-center">
-               		<?php if(!isset($ans[$row['id']])): ?>
                			<a href="index.php?page=answer_survey&id=<?php echo $row['id'] ?>" class="btn btn-sm bg-gradient-primary"><i class="fa fa-pen-square"></i> Take Survey</a>
-               		<?php else: ?>
-               			<p class="text-primary border-top border-primary">Done</p>
-               		<?php endif; ?>
                	</div>
                </div>
               </div>

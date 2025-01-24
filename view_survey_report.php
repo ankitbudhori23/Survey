@@ -23,7 +23,7 @@ while($row=$answers->fetch_assoc()){
 		$ans[$row['question_id']][] = $row['answer'];
 	}
     if($row['type'] == 'image'){
-        $ans[$row['question_id']][] = $row['answer'];
+        $ans[$row['question_id']][] = json_decode($row['answer'], true);
     }
 }
 ?>
@@ -74,8 +74,10 @@ while($row=$answers->fetch_assoc()){
 							
 						<?php if($row['type'] == 'image'):?>
 							<?php if(isset($ans[$row['id']])): ?>
-								<?php foreach($ans[$row['id']] as $val): ?>
-									<img onclick="showImageModal('<?php echo $val ?>')" src="<?php echo $val ?>" alt="Image Answer" style="width: 80px; height: 80px; cursor: pointer">
+								<?php foreach($ans[$row['id']] as $images): ?>
+									<?php foreach($images as $val): ?>
+										<img onclick="showImageModal('<?php echo $val ?>')" src="<?php echo $val ?>" alt="Image Answer" style="width: 80px; height: 80px; cursor: pointer">
+									<?php endforeach; ?>
 								<?php endforeach; ?>
 							<?php endif; ?>
 
