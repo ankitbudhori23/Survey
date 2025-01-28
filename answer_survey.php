@@ -34,9 +34,18 @@ foreach($qry as $k => $v){
 			<div class="card card-outline card-success">
 				<div class="card-header">
 					<h3 class="card-title"><b>Survey Questionaire</b></h3>
+					<div id="location-error" style="margin-top: 16px;
+						text-align: center;
+						color: red;
+						font-weight: bold;
+						width: 100%;
+						display: none;
+						font-size: 18px;">⚠️ Please enable location to proceed.</div>
 				</div>
 				<form action="" id="manage-survey">
 					<input type="hidden" name="survey_id" value="<?php echo $id ?>">
+					<input type="hidden" name="lat" id="latitude">
+					<input type="hidden" name="lon" id="longitude">
 				<div class="card-body ui-sortable">
 					<?php 
 					$question = $conn->query("SELECT * FROM questions where survey_id = $id order by abs(order_by) asc,abs(id) asc");
@@ -89,13 +98,33 @@ foreach($qry as $k => $v){
 	</div>
 </div>
 <script>
+	document.addEventListener("DOMContentLoaded", function () {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(sendPosition, showError);
+    } else {
+        alert("Geolocation is not supported by this browser.");
+    }
+});
+
+function sendPosition(position) {
+    let lat = position.coords.latitude;
+    let lon = position.coords.longitude;
+    let latInput = document.getElementById("latitude");
+    let lonInput = document.getElementById("longitude");
+	latInput.value = lat;
+	lonInput.value = lon;
+}
+
+function showError(error) {
+    let warningDiv = document.getElementById("location-error");
+    warningDiv.style.display = "inline-block";
+}
 	$('#manage-survey').submit(function(e){
 		e.preventDefault()
 		start_load()
 
-		// Create a FormData object
 		var formData = new FormData(this);
-
+		console.log(formData)
 		$.ajax({
 			url: 'ajax.php?action=save_answer',
 			method: 'POST',

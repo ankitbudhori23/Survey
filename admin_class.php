@@ -68,17 +68,25 @@ Class Action {
 	function update_user(){
 		extract($_POST);
 		$data = "";
-		foreach($_POST as $k => $v){
-			if(!in_array($k, array('id','cpass','table')) && !is_numeric($k)){
-				if($k =='password')
-					$v = md5($v);
-				if(empty($data)){
+		foreach ($_POST as $k => $v) {
+			// Skip 'id', 'cpass', 'table', and any numeric keys
+			if (!in_array($k, array('id', 'cpass', 'table')) && !is_numeric($k)) {
+				// Check if the field is password and it's not empty
+				if ($k == 'password' && !empty($v)) {
+					$v = md5($v);  // Hash the password if it's not empty
+				} elseif ($k == 'password' && empty($v)) {
+					continue;  // Skip this field if the password is blank
+				}
+				
+				// Add the field to the update string
+				if (empty($data)) {
 					$data .= " $k='$v' ";
-				}else{
+				} else {
 					$data .= ", $k='$v' ";
 				}
 			}
 		}
+
 		$check = $this->db->query("SELECT * FROM users where email ='$email' ".(!empty($id) ? " and id != {$id} " : ''))->num_rows;
 		if($check > 0){
 			return 2;
@@ -239,9 +247,11 @@ Class Action {
 			else{
 				$data .= ", answer='$answer[$k]' ";
 			}
+			$data.=",latitude='$lat' ";
+			$data.=",longitude='$lon' ";
 			$save[] = $this->db->query("INSERT INTO answers set $data");
 		}
-
+		$this->db->query("UPDATE users set survey_count = survey_count + 1 where id = {$_SESSION['login_id']}");
 		if(isset($save))
 			return 1;
 	}

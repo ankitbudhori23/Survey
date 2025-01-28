@@ -2,7 +2,7 @@
 <!-- Info boxes -->
 <?php if($_SESSION['login_type'] == 1): ?>
         <div class="row">
-          <div class="col-12 col-sm-6 col-md-3">
+          <a href="index.php?page=user_list" class="col-12 col-sm-6 col-md-3">
             <div class="info-box">
               <span class="info-box-icon bg-info elevation-1"><i class="fas fa-users"></i></span>
 
@@ -15,9 +15,9 @@
               <!-- /.info-box-content -->
             </div>
             <!-- /.info-box -->
-          </div>
+          </a>
           <!-- /.col -->
-          <div class="col-12 col-sm-6 col-md-3">
+          <a href="index.php?page=survey_list" class="col-12 col-sm-6 col-md-3">
             <div class="info-box mb-3">
               <span class="info-box-icon bg-primary elevation-1"><i class="fas fa-poll-h"></i></span>
 
@@ -30,7 +30,7 @@
               <!-- /.info-box-content -->
             </div>
             <!-- /.info-box -->
-          </div>
+          </a>
           <!-- /.col -->
       </div>
 
@@ -43,21 +43,33 @@
           </div>
       </div>
       <div class="row">
-          <div class="col-12 col-sm-6 col-md-3">
+          <a href="index.php?page=user_servey" class="col-12 col-sm-6 col-md-3">
             <div class="info-box">
               <span class="info-box-icon bg-primary elevation-1"><i class="fas fa-poll-h"></i></span>
 
               <div class="info-box-content">
                 <span class="info-box-text">Total Surveys Taken</span>
                 <span class="info-box-number">
-                  <?php echo $conn->query("SELECT distinct(survey_id) FROM answers  where user_id = {$_SESSION['login_id']}")->num_rows; ?>
+                  <?php # echo $conn->query("SELECT distinct(survey_id) FROM answers  where user_id = {$_SESSION['login_id']}")->num_rows; ?>
+                  <?php echo $conn->query("SELECT survey_count FROM users where id = {$_SESSION['login_id']}")->fetch_array()['survey_count']; ?>
                 </span>
               </div>
               <!-- /.info-box-content -->
             </div>
             <!-- /.info-box -->
-          </div>
+          </a>
           <!-- /.col -->
+          <a href="index.php?page=survey_widget" class="col-12 col-sm-6 col-md-3">
+            <div class="info-box">
+              <span class="info-box-icon bg-primary elevation-1"><i class="fas fa-list"></i></span>
+
+              <div class="info-box-content">
+                <span class="info-box-text">Survey List</span>
+              </div>
+              <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+          </a>
       </div>
           
 <?php endif; ?>
