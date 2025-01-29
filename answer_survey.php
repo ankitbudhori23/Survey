@@ -20,8 +20,7 @@ foreach($qry as $k => $v){
 				<div class="card-body p-0 py-2">
 					<div class="container-fluid">
 						<p>Title: <b><?php echo $stitle ?></b></p>
-						<p class="mb-0">Description:</p>
-						<small><?php echo $description; ?></small>
+						<p>Description:<b><?php echo $description; ?></b></p>
 						<p>Start: <b><?php echo date("M d, Y",strtotime($start_date)) ?></b></p>
 						<p>End: <b><?php echo date("M d, Y",strtotime($end_date)) ?></b></p>
 

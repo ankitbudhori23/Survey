@@ -32,6 +32,17 @@
             <!-- /.info-box -->
           </a>
           <!-- /.col -->
+          <a href="index.php?page=survey_report" class="col-12 col-sm-6 col-md-3">
+            <div class="info-box mb-3">
+              <span class="info-box-icon bg-primary elevation-1"><i class="fas fa-file"></i></span>
+
+              <div class="info-box-content">
+                <span class="info-box-text">Survey Report</span>
+              </div>
+              <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+          </a>
       </div>
 
 <?php else: ?>

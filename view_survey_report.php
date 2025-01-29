@@ -1,175 +1,91 @@
-<?php include 'db_connect.php' ?>
-<?php 
-$qry = $conn->query("SELECT * FROM survey_set where id = ".$_GET['id'])->fetch_array();
-foreach($qry as $k => $v){
-	if($k == 'title')
-		$k = 'stitle';
-	$$k = $v;
-}
-$taken = $conn->query("SELECT distinct(user_id) from answers where survey_id ={$id}")->num_rows;
-$answers = $conn->query("SELECT a.*,q.type from answers a inner join questions q on q.id = a.question_id where a.survey_id ={$id}");
-$ans = array();
-
-while($row=$answers->fetch_assoc()){
-	if($row['type'] == 'radio_opt'){
-		$ans[$row['question_id']][$row['answer']][] = 1;
-	}
-	if($row['type'] == 'check_opt'){
-		foreach(explode(",", str_replace(array("[","]"), '', $row['answer'])) as $v){
-		$ans[$row['question_id']][$v][] = 1;
-		}
-	}
-	if($row['type'] == 'textfield_s'){
-		$ans[$row['question_id']][] = $row['answer'];
-	}
-    if($row['type'] == 'image'){
-        $ans[$row['question_id']][] = json_decode($row['answer'], true);
-    }
-}
-?>
-<style>
-	.tfield-area{
-		max-height: 30vh;
-		overflow: auto;
-	}
-</style>
-<div class="col-lg-12">
-	<div class="row">
-		<div class="col-md-4">
-			<div class="card card-outline card-primary">
-				<div class="card-header">
-					<h3 class="card-title"><b>Survey Details</b></h3>
-					
-				</div>
-				<div class="card-body p-0 py-2">
-					<div class="container-fluid">
-						<p>Title: <b><?php echo $stitle ?></b></p>
-						<p class="mb-0">Description:</p>
-						<small><?php echo $description; ?></small>
-						<p>Start: <b><?php echo date("M d, Y",strtotime($start_date)) ?></b></p>
-						<p>End: <b><?php echo date("M d, Y",strtotime($end_date)) ?></b></p>
-						<p>Have Taken: <b><?php echo number_format($taken) ?></b></p>
-
-
-					</div>
-					<hr class="border-primary">
-				</div>
+<?php include'db_connect.php' ?>
+<div class="card-header">
+			<div class="card-tools">
+				<a class="btn btn-block btn-sm btn-default btn-flat border-primary" href="index.php?page=view_survey_report_all&id=<?php echo $_GET['id'] ?>"><i class="fa fa-eye"></i> View All</a>
 			</div>
 		</div>
-		<div class="col-md-8">
-			<div class="card card-outline card-success">
-				<div class="card-header">
-					<h3 class="card-title"><b>Survey Report</b></h3>
-				</div>
-				<div class="card-body ui-sortable">
-					<?php 
-					$question = $conn->query("SELECT * FROM questions where survey_id = $id order by abs(order_by) asc,abs(id) asc");
-					while($row=$question->fetch_assoc()):	
-					?>
-					<div class="callout callout-info">
-						<h5><?php echo $row['question'] ?></h5>	
-						<div class="col-md-12">
-						<input type="hidden" name="qid[<?php echo $row['id'] ?>]" value="<?php echo $row['id'] ?>">	
-						<input type="hidden" name="type[<?php echo $row['id'] ?>]" value="<?php echo $row['type'] ?>">	
-							
-						<?php if($row['type'] == 'image'):?>
-							<?php if(isset($ans[$row['id']])): ?>
-								<?php foreach($ans[$row['id']] as $images): ?>
-									<?php foreach($images as $val): ?>
-										<img onclick="showImageModal('<?php echo $val ?>')" src="<?php echo $val ?>" alt="Image Answer" style="width: 80px; height: 80px; cursor: pointer">
-									<?php endforeach; ?>
-								<?php endforeach; ?>
-							<?php endif; ?>
+<div class="col-lg-12">
+	<div class="card card-outline card-primary">
+		<div class="card-body">
+			<table class="table tabe-hover table-bordered" id="list">
+				<colgroup>
+					<col width="5%">
+					<col width="20%">
+					<col width="20%">
+					<col width="20%">
+					<col width="20%">
+					<col width="15%">
+				</colgroup>
+				<thead>
+					<tr>
+						<th class="text-center">#</th>
+						<th>Taken By</th>
+						<th>Date</th>
+						<th>Time</th>
+						<th>Action</th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php
+					$i = 1;
+					$qry = $conn->query("SELECT 
+                        DATE_FORMAT(answers.date_created, '%Y-%m-%d %H:%i:%s') AS timestamp, 
+                        GROUP_CONCAT(DISTINCT CONCAT(users.firstname, ' ', users.lastname) SEPARATOR ' _ ') AS user_names
+                    FROM answers
+                    INNER JOIN survey_set ON survey_set.id = answers.survey_id
+                    INNER JOIN users ON users.id = answers.user_id
+                    WHERE answers.survey_id = {$_GET['id']}
+                    GROUP BY timestamp, survey_set.title
+                    ORDER BY timestamp DESC;");
 
-						<?php elseif($row['type'] != 'textfield_s'):?>
-							<ul>
-							<?php foreach(json_decode($row['frm_option']) as $k => $v): 
-								$prog = $taken > 0 ? ((isset($ans[$row['id']][$k]) ? count($ans[$row['id']][$k]) : 0) / $taken) * 100 : 0;
-								$prog = round($prog,2);
-								?>
-								<li>
-									<div class="d-block w-100">
-										<b><?php echo $v ?></b>
-									</div>
-									<div class="d-flex w-100">
-									<span class=""><?php echo isset($ans[$row['id']][$k]) ? count($ans[$row['id']][$k]) : 0 ?>/<?php echo $taken ?></span>
-									<div class="mx-1 col-sm-8"">
-									<div class="progress w-100" >
-					                  <div class="progress-bar bg-primary progress-bar-striped" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $prog ?>%">
-					                    <span class="sr-only"><?php echo $prog ?>%</span>
-					                  </div>
-					                </div>
-					                </div>
-					                <span class="badge badge-info"><?php echo $prog ?>%</span>
-									</div>
-								</li>
-								<?php endforeach; ?>
-							</ul>
-						<?php else: ?>
-							<div class="d-block tfield-area w-100 bg-dark">
-								<?php if(isset($ans[$row['id']])): ?>
-								<?php foreach($ans[$row['id']] as $val): ?>
-								<blockquote class="text-dark"><?php echo $val ?></blockquote>
-								<?php endforeach; ?>
-								<?php endif; ?>
-							</div>
-						<?php endif; ?>
-						</div>	
-					</div>
-					<?php endwhile; ?>
-				</div>
-			</div>
+					while($row= $qry->fetch_assoc()):
+				// 		echo '<pre>';
+				// 		print_r($row);
+				// 		echo '</pre>';
+					?>
+					<tr>
+						<th class="text-center"><?php echo $i++ ?></th>
+						<td><b><?php echo $row['user_names']?></b></td>
+						<td><b><?php echo date("M d, Y",strtotime($row['timestamp'])) ?></b></td>
+						<td><b><?php echo date("h:i:s A", strtotime($row['timestamp'])) ?></b></td>
+						<td class="text-center">
+		                    <div class="btn-group">
+		                        <a href="index.php?page=user_servey_det&d=<?php echo $row['timestamp'] ?>" class="btn btn-info btn-flat">
+		                          <i class="fas fa-eye"></i>
+		                        </a>
+	                      </div>
+						</td>
+					</tr>	
+				<?php endwhile; ?>
+				</tbody>
+			</table>
 		</div>
 	</div>
 </div>
-
-<!-- Modal for full screen image -->
-<div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="imageModalLabel">Image View</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <img id="modalImage" src="" alt="Full Screen Image" style="width: 100%; height: auto;">
-      </div>
-    </div>
-  </div>
-</div>
-
 <script>
-	function showImageModal(src) {
-		$('#modalImage').attr('src', src);
-		$('#imageModal').modal('show');
-	}
-
-	$('#manage-survey').submit(function(e){
-		e.preventDefault()
+	$(document).ready(function(){
+		$('#list').dataTable({
+        "pageLength": 20,
+    })
+	$('.delete_survey').click(function(){
+	_conf("Are you sure to delete this survey?","delete_survey",[$(this).attr('data-id')])
+	})
+	})
+	function delete_survey($id){
 		start_load()
 		$.ajax({
-			url:'ajax.php?action=save_answer',
+			url:'ajax.php?action=delete_survey',
 			method:'POST',
-			data:$(this).serialize(),
+			data:{id:$id},
 			success:function(resp){
-				if(resp == 1){
-					alert_toast("Thank You.",'success')
+				if(resp==1){
+					alert_toast("Data successfully deleted",'success')
 					setTimeout(function(){
-						location.href = 'index.php?page=survey_widget'
-					},2000)
+						location.reload()
+					},1500)
+
 				}
 			}
 		})
-	})
-	$('#print').click(function(){
-		start_load()
-		var nw = window.open("print_report.php?id=<?php echo $id ?>","_blank","width=800,height=600")
-			nw.print()
-			setTimeout(function(){
-				nw.close()
-				end_load()
-			},2500)
-	})
+	}
 </script>
